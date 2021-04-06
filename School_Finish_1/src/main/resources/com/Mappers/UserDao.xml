@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mincheung.dao.UserDao">
+    <select id="findLogin"  parameterType="com.mincheung.domain.User" resultType="com.mincheung.domain.User">
+        select * from  t_user  where  userId=#{userId}  and f_userName=#{f_userName} and  f_password=#{f_password}
+    </select>
+
+    <select id="findUserOldPsw" parameterType="com.mincheung.domain.User" resultType="java.lang.String">
+        select  u.f_password from t_user as u where userId=#{userId} and  f_realName=#{f_realName}
+    </select>
+
+    <select id="findRoomforS" parameterType="com.mincheung.domain.Student" resultType="com.mincheung.domain.Room">
+        select  * from t_room  where roomId=#{f_roomId}
+    </select>
+
+    <select id="findRoomforSNew" parameterType="com.mincheung.domain.Student" resultType="com.mincheung.domain.Room">
+        select  * from t_room  where roomId=#{f_newRoom}
+    </select>
+
+    <select id="findRoomforF" parameterType="com.mincheung.domain.Roomfacility" resultType="com.mincheung.domain.Room">
+        select  * from t_room  where roomId=#{f_roomId}
+    </select>
+
+    <update id="ModifyPsw" parameterType="com.mincheung.domain.User" >
+        update  t_user set  f_password=#{f_password} where userId=#{userId}
+    </update>
+
+    <insert id="studentCheckIn" parameterType="com.mincheung.domain.Student">
+        <selectKey keyProperty="studentId" keyColumn="studentId" resultType="int" order="AFTER"><!--第一个参数是对象实体类属性  第二个：数据库列 返回类型为int 执行顺序为之后-->
+            select last_insert_id();
+        </selectKey>
+        insert  into  t_student  (studentId,f_name,f_sex,f_classId,f_roomId,f_phone,f_face,f_joinDate) values (#{studentId},#{f_name},#{f_sex},#{f_classId},#{f_roomId},#{f_phone},#{f_face},#{f_joinDate})
+    </insert>
+
+    <insert id="AddRoom" parameterType="com.mincheung.domain.Room">
+        <selectKey keyProperty="roomId" keyColumn="roomId" resultType="int" order="AFTER"><!--第一个参数是对象实体类属性  第二个：数据库列 返回类型为int 执行顺序为之后-->
+            select last_insert_id();
+        </selectKey>
+        insert  into  t_room  (roomId,f_roomAddress,f_recipientNumber,f_status,f_roomType) values (#{roomId},#{f_roomAddress},#{f_recipientNumber},#{f_status},#{f_roomType})
+    </insert>
+
+    <insert id="AddFacility" parameterType="com.mincheung.domain.Roomfacility">
+        <selectKey keyProperty="facilityId" keyColumn="facilityId" resultType="int" order="AFTER"><!--第一个参数是对象实体类属性  第二个：数据库列 返回类型为int 执行顺序为之后-->
+            select last_insert_id();
+        </selectKey>
+        insert  into  t_roomfacility  (facilityId,f_damageInfo,f_damageDate,f_resolveStatus,f_roomId) values (#{facilityId},#{f_damageInfo},#{f_damageDate},#{f_resolveStatus},#{f_roomId})
+    </insert>
+
+    <insert id="AddClass" parameterType="com.mincheung.domain.Class">
+        <selectKey keyProperty="classId" keyColumn="classId" resultType="int" order="AFTER"><!--第一个参数是对象实体类属性  第二个：数据库列 返回类型为int 执行顺序为之后-->
+            select last_insert_id();
+        </selectKey>
+        insert  into  t_class  (classId,className,createDate,teacher) values (#{classId},#{className},#{createDate},#{teacher})
+    </insert>
+
+
+    <insert id="AddUser" parameterType="com.mincheung.domain.User">
+        <selectKey keyProperty="userId" keyColumn="userId" resultType="int" order="AFTER"><!--第一个参数是对象实体类属性  第二个：数据库列 返回类型为int 执行顺序为之后-->
+            select last_insert_id();
+        </selectKey>
+        insert  into  t_user  (userId,f_userName,f_password,f_realName,f_grade) values (#{userId},#{f_userName},#{f_password},#{f_realName},#{f_grade})
+    </insert>
+
+
+    <select id="studentTotal" resultType="java.lang.Long">
+        select  count(*)   from  t_student
+    </select>
+
+    <select id="findStudent" parameterType="com.mincheung.Responses.Page"  resultType="com.mincheung.domain.Student">
+        select * from  t_student limit ${begining},${PageSize}
+    </select>
+
+    <select id="findStudentQ" parameterType="com.mincheung.domain.Student"  resultType="com.mincheung.domain.Student">
+        select * from  t_student where  f_name=#{f_name} and  f_classId=#{f_classId}  and f_roomId=#{f_roomId}
+    </select>
+
+    <update id="ModifyRoom" parameterType="com.mincheung.domain.Student" >
+        update t_student  set  f_roomId=#{f_newRoom} where  studentId=#{studentId} and f_name=#{f_name}
+    </update>
+
+    <delete id="StudentQuit" parameterType="com.mincheung.domain.Student" >
+        delete  from  t_student where  studentId=#{studentId} and  f_name=#{f_name}
+    </delete>
+
+    <select id="RoomCount" resultType="java.lang.Long">
+        select  count(*)   from  t_room
+    </select>
+
+    <select id="findRoom" parameterType="com.mincheung.Responses.Page"  resultType="com.mincheung.domain.Room">
+        select * from  t_room limit ${begining},${PageSize}
+    </select>
+
+    <delete id="DeletRoom" parameterType="com.mincheung.domain.Room" >
+        delete  from  t_room where  roomId=#{roomId} and  f_roomAddress=#{f_roomAddress}
+    </delete>
+
+    <select id="findSFormR" parameterType="com.mincheung.domain.Room" resultType="com.mincheung.domain.Student">
+        select * from t_student where f_roomId=#{roomId}
+    </select>
+
+    <select id="findRFfromR" resultType="com.mincheung.domain.Roomfacility" parameterType="com.mincheung.domain.Room">
+         select * from t_roomfacility where f_roomId=#{roomId}
+    </select>
+
+
+    <select id="findRoomQ" parameterType="com.mincheung.domain.Room" resultType="com.mincheung.domain.Room">
+            select  * from  t_room where  f_roomAddress=#{f_roomAddress}
+            <if test="f_status!=null">
+                and  f_status=#{f_status}
+            </if>
+            and f_roomType=#{f_roomType}
+    </select>
+
+
+    <select id="totalPageofRoomF" resultType="java.lang.Long">
+        select count(*) from  t_roomfacility
+    </select>
+
+    <select id="findRoomF" parameterType="com.mincheung.Responses.Page" resultType="com.mincheung.domain.Roomfacility">
+        select * from  t_roomfacility limit ${begining},${PageSize}
+    </select>
+
+    <update id="ModifyFS" parameterType="com.mincheung.domain.Roomfacility" >
+        update t_roomfacility set  f_resolveStatus=#{f_resolveStatus} where  f_roomId=#{f_roomId}  and  facilityId=#{facilityId}
+    </update>
+
+
+    <select id="findRF" parameterType="com.mincheung.domain.Roomfacility" resultType="com.mincheung.domain.Roomfacility">
+        select  *  from  t_roomfacility  where  f_roomId=#{f_roomId}
+    </select>
+
+    <select id="totalPageofClass" resultType="java.lang.Long">
+        select  count(*)  from  t_class
+    </select>
+
+
+    <select id="findClass" parameterType="com.mincheung.Responses.Page" resultType="com.mincheung.domain.Class">
+        select * from  t_class limit ${begining},${PageSize}
+    </select>
+
+
+    <delete id="ClassDe" parameterType="com.mincheung.domain.Class">
+        delete  from t_class  where  classId=#{classId} and  className=#{className}
+    </delete>
+
+
+    <select id="findSFC" parameterType="com.mincheung.domain.Class" resultType="com.mincheung.domain.Student">
+        select * from  t_class where   classId=#{classId}
+    </select>
+
+
+    <select id="Usercount" resultType="java.lang.Long">
+        select count(*)  t_user
+    </select>
+
+
+    <select id="findUser"   parameterType="com.mincheung.Responses.Page"  resultType="com.mincheung.domain.User">
+        select  * from  t_user  limit   ${begining},${PageSize}
+    </select>
+
+    <update id="ChangUserG" parameterType="com.mincheung.domain.User">
+        update  t_user set f_grade=#{f_grade} where userId=#{userId}  and  f_realName=#{f_realName}
+    </update>
+
+    <delete id="UserDele" parameterType="com.mincheung.domain.User">
+        delete  from t_user where userId=#{userId} and f_realName=#{f_realName}
+    </delete>
+</mapper>
